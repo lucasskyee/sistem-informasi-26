@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="darkreader-lock">
+<title>SI 26 · Sistem Informasi UNJANI</title>
+<link rel="icon" href="logo.png">
+<meta name="theme-color" content="#0C0C0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0C0C0C;--indigo:#0C0C0C;--mint:#FFEF14;--sun:#FFEF14;--cloud:#FAFAF2;--line:#E4E1C4;--tx:#1A1A1A;--mut:#68675A}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.6 'DM Sans',system-ui,sans-serif;color:var(--tx);background:var(--cloud)}
+h1,h2,h3,.disp{font-family:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;line-height:1.1}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:12px max(5vw,calc((100vw - 1180px)/2 + 5vw));background:rgba(250,250,242,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav b{font:800 20px 'Bricolage Grotesque',sans-serif}
+nav div{display:flex;gap:4px;flex-wrap:wrap}
+nav a{text-decoration:none;padding:6px 14px;border-radius:99px;font-weight:500;font-size:15px;transition:.2s}
+nav a:hover{background:var(--indigo);color:var(--sun)}
+nav .nb{gap:10px;align-items:center}
+.nb img{width:40px;height:40px;border-radius:50%;display:block}
+.hero{position:relative;overflow:hidden;background:radial-gradient(circle at var(--mx,88%) var(--my,12%),rgba(255,239,20,.2),transparent 42%),var(--ink);color:#fff;padding:10vh max(5vw,calc((100vw - 1180px)/2 + 5vw)) 9vh;min-height:80vh;min-height:80svh;display:flex;flex-direction:column;justify-content:center}
+.hero svg{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.flow{stroke:var(--mint);stroke-width:1.6;fill:none;stroke-dasharray:6 10;animation:flow 3s linear infinite}
+.node{fill:var(--sun);transform-box:fill-box;transform-origin:center;animation:pulse 3s ease-in-out infinite}
+.hero>*:not(svg){position:relative;z-index:1;opacity:0;animation:up .8s cubic-bezier(.2,.8,.2,1) forwards}
+.hero>:nth-child(2){animation-delay:.1s}.hero>:nth-child(3){animation-delay:.25s}.hero>:nth-child(4){animation-delay:.4s}.hero>:nth-child(5){animation-delay:.55s}.hero>:nth-child(6){animation-delay:.7s}
+.hero p.sub{font-size:18px;color:#D6D6CA}
+.brand{display:flex;align-items:center;gap:16px}
+.brand img{width:76px;height:76px;border-radius:50%;box-shadow:0 0 0 4px rgba(255,239,20,.3);animation:float 5s ease-in-out infinite}
+.clock{font:800 clamp(46px,14vw,190px)/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:.1em 0 0}
+.clock i{font-style:normal;color:var(--mint);animation:blink 1s steps(2) infinite}
+.clock small{font-size:max(.2em,14px);color:var(--sun);margin-left:.3em;letter-spacing:0}
+.date{font-size:20px;color:#EDEDE0;margin-bottom:22px}
+.next{display:inline-block;max-width:100%;padding:12px 20px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22)}
+.next.live{background:var(--mint);color:var(--ink);border-color:var(--mint);font-weight:700}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-block;text-decoration:none;border:0;cursor:pointer;font:700 16px 'DM Sans',sans-serif;padding:12px 22px;border-radius:99px;background:var(--sun);color:var(--ink);transition:transform .2s}
+.btn:hover{transform:translateY(-3px) rotate(-1deg)}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.45)}
+section{padding:clamp(48px,8vw,88px) 5vw;max-width:1180px;margin:auto}
+section>h2{font-size:clamp(30px,5vw,48px);margin-bottom:8px}
+section>p.lead{color:var(--mut);margin-bottom:30px;max-width:60ch}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab{border:2px solid var(--line);background:#fff;padding:8px 18px;border-radius:99px;font:500 15px 'DM Sans',sans-serif;cursor:pointer;transition:.2s}
+.tab:hover{border-color:var(--indigo)}
+.tab[aria-selected=true]{background:var(--indigo);border-color:var(--indigo);color:var(--sun)}
+.tab em{font-style:normal;margin-left:6px;background:var(--sun);color:var(--ink);border-radius:99px;padding:0 8px;font-size:12px;font-weight:700}
+.list{display:grid;gap:12px}
+.cls{display:grid;grid-template-columns:130px 1fr auto;gap:18px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:18px;padding:18px 22px;animation:up .45s both}
+.cls .t{font:800 22px 'Bricolage Grotesque',sans-serif;color:var(--indigo)}
+.cls .t small{display:block;font:500 13px 'DM Sans',sans-serif;color:var(--mut)}
+.cls h3{font-size:20px}.cls p{color:var(--mut);font-size:14px}
+.cls .st{font-size:14px;font-weight:700;color:var(--mut);text-align:right}
+.cls.live{border-color:var(--mint);box-shadow:0 0 0 5px rgba(255,239,20,.55);animation:up .45s both,glow 2s ease-in-out infinite}
+.cls.live .st{color:var(--ink)}
+.cls.done{opacity:.55}
+.empty{padding:34px;text-align:center;border:2px dashed var(--line);border-radius:18px;color:var(--mut)}
+.org{display:grid;gap:34px;justify-items:center}
+.row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;position:relative}
+.row+.row::before{content:'';position:absolute;top:-34px;left:50%;height:34px;border-left:2px dashed var(--indigo)}
+.per{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 18px 12px 12px;transition:transform .25s,border-color .25s}
+.per:hover{transform:translateY(-4px);border-color:var(--indigo)}
+.per.big{border-color:var(--indigo);background:var(--indigo);color:#fff}.per.big small{color:#D8D8CC}
+.av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:800 16px 'Bricolage Grotesque',sans-serif;color:#fff;flex:none}
+.per b{display:block;line-height:1.2}.per small{color:var(--mut);font-size:13px}
+.grp{border:2px dashed var(--line);border-radius:22px;padding:16px;display:grid;gap:10px;background:rgba(255,255,255,.5)}
+.grp h3{font-size:18px;text-align:center}
+.all{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;width:100%}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.tile{aspect-ratio:4/3;border:0;border-radius:10px;overflow:hidden;position:relative;cursor:pointer;display:grid;place-items:center;font-size:44px;transition:transform .3s,border-radius .3s;animation:pop .5s backwards}
+.tile:hover{transform:scale(1.04) rotate(-1deg);border-radius:26px}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile span{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(16,21,74,.85));color:#fff;font:500 14px 'DM Sans',sans-serif;text-align:left}
+dialog{border:0;border-radius:20px;padding:0;max-width:min(92vw,820px);width:100%;overflow:hidden;animation:pop .3s}
+dialog::backdrop{background:rgba(16,21,74,.8)}
+dialog .big{aspect-ratio:16/10;display:grid;place-items:center;font-size:90px;position:relative}
+dialog .big img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+dialog footer{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff}
+.msgwrap{display:grid;grid-template-columns:minmax(0,380px) 1fr;gap:28px;align-items:start}
+form{background:#fff;border:2px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:12px;position:sticky;top:80px}
+label{font-weight:700;font-size:14px}
+select,textarea{width:100%;font:16px 'DM Sans',sans-serif;padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:var(--cloud);color:var(--tx)}
+textarea{min-height:130px;resize:vertical}
+select:focus,textarea:focus{outline:none;border-color:var(--indigo)}
+form small{color:var(--mut)}
+.msgs{display:grid;gap:12px}
+.msg{background:#fff;border:2px solid var(--line);border-left:8px solid var(--indigo);border-radius:6px 18px 18px 6px;padding:14px 18px;animation:slide .5s both}
+.msg.Pesan{border-left-color:var(--mint)}.msg.Keluhan{border-left-color:#FF7A1A}
+.msg header{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:4px}
+.msg header b{color:var(--tx)}
+.msg p{white-space:pre-wrap;overflow-wrap:anywhere}
+.msg button{border:0;background:none;color:var(--mut);cursor:pointer;font-size:13px;text-decoration:underline}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,120px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:99px;transition:transform .4s cubic-bezier(.2,.9,.3,1.3);z-index:50}
+.toast.on{transform:translate(-50%,0)}
+footer.site{text-align:center;padding:30px 5vw;color:var(--mut);border-top:1px solid var(--line)}
+.marq{background:var(--sun);color:var(--ink);overflow:hidden;white-space:nowrap;border-block:2px solid var(--ink);padding:12px 0;font:800 20px 'Bricolage Grotesque',sans-serif}
+.marq div{display:inline-block;animation:mq 40s linear infinite}
+.marq span{margin:0 16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.stat{border:2px solid var(--ink);border-radius:22px;padding:20px 24px;transition:transform .25s}
+.stat:hover{transform:translateY(-5px) rotate(-1deg)}
+.stat.t{background:#fff}.stat.l{background:var(--ink);color:var(--sun)}.stat.p{background:var(--sun);color:var(--ink)}
+.stat .num{font:800 clamp(56px,9vw,92px)/1 'Bricolage Grotesque',sans-serif;font-variant-numeric:tabular-nums}
+.stat .lbl{font-weight:700}
+.ratio{display:flex;height:48px;border-radius:99px;overflow:hidden;border:2px solid var(--ink);margin:16px 0 40px;background:#fff}
+.ratio div{display:flex;align-items:center;justify-content:center;width:0;overflow:hidden;white-space:nowrap;font-weight:700;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+.ratio .rl{background:var(--ink);color:var(--sun)}.ratio .rp{background:var(--sun);color:var(--ink)}
+.fbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:10px 0 18px}
+.fbar .tabs{margin:0}
+.fbar input{width:100%;max-width:280px;font:16px 'DM Sans',sans-serif;padding:10px 16px;border:2px solid var(--line);border-radius:99px;background:#fff;color:var(--tx)}
+.fbar input:focus{outline:none;border-color:var(--ink)}
+.av.l{background:var(--ink);color:var(--sun)}
+.av.p{background:var(--sun);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.per{animation:pop .45s backwards}
+.all .empty{grid-column:1/-1}
+#pengurus:not(:empty){margin-bottom:44px}
+.cls{position:relative;overflow:hidden}
+.cls.live::after{content:'';position:absolute;left:0;bottom:0;height:5px;width:var(--p,0%);background:var(--ink);transition:width 1s linear}
+.prog{position:fixed;top:0;left:0;right:0;height:4px;z-index:40;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+.mini{font:700 14px 'DM Sans',sans-serif;background:var(--ink);color:var(--sun);padding:6px 14px;border-radius:99px;font-variant-numeric:tabular-nums;opacity:0;transform:translateY(-6px);transition:.3s}
+.mini.show{opacity:1;transform:none}
+nav a.on{background:var(--ink);color:var(--sun)}
+.bnav{display:none}
+.tab{padding:10px 18px}
+.btn:disabled{opacity:.5;cursor:wait;transform:none}
+.pick{display:grid;gap:14px;justify-items:center;background:var(--ink);color:#fff;border-radius:26px;padding:28px;margin:0 0 40px;text-align:center}
+.pick h3{color:var(--sun);font-size:22px}
+.pick .out{font:800 clamp(26px,6vw,54px)/1.1 'Bricolage Grotesque',sans-serif;min-height:2.3em;display:grid;place-items:center;overflow-wrap:anywhere}
+.pick .out.fin{color:var(--sun);animation:pop .5s}
+.pick small{color:#CFCFC4}
+.lbb{display:flex;gap:8px}
+dialog footer{flex-wrap:wrap;gap:10px}
+.rx{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.rx button{border:2px solid var(--line);background:var(--cloud);border-radius:99px;padding:6px 14px;font-size:14px;text-decoration:none;color:var(--tx);cursor:pointer;transition:transform .15s}
+.rx button:hover{border-color:var(--ink)}.rx button:active{transform:scale(.9)}
+.cf{position:fixed;width:9px;height:14px;border-radius:2px;z-index:60;pointer-events:none;border:1px solid rgba(0,0,0,.25);animation:cf 1s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes cf{to{transform:translate(var(--dx),calc(var(--dy) + 340px)) rotate(var(--r));opacity:0}}
+@media(hover:none){.per:active,.tile:active,.stat:active{transform:scale(.97)}}
+@media(max-width:760px){
+ .bnav{display:flex;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);border-radius:22px;padding:6px;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+ .bnav a{flex:1;display:grid;gap:2px;text-align:center;text-decoration:none;color:#fff;font:700 11px 'DM Sans',sans-serif;padding:8px 2px;border-radius:16px;transition:.2s}
+  .bnav a.on{background:var(--sun);color:var(--ink)}
+ body{padding-bottom:96px}
+ .toast{bottom:108px}
+ nav .nl{display:none}
+ nav{padding-block:10px}
+}
+@media(max-width:600px){
+ .stats{grid-template-columns:repeat(3,1fr);gap:8px}
+ .stat{padding:14px 12px;border-radius:18px}
+ .stat .num{font-size:clamp(40px,14vw,64px)}
+ .stat .lbl{font-size:13px}
+ .ratio{height:42px;font-size:13px}
+ .gal{grid-template-columns:repeat(2,1fr);gap:10px}
+ .tile{font-size:34px}
+ .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+ .tab{flex:none}
+ .brand img{width:60px;height:60px}.hero p.sub{font-size:15px}
+ .cta .btn{flex:1 1 150px;text-align:center}
+ dialog .big{aspect-ratio:4/3}
+ .pick{padding:22px 16px}
+ .fbar input{max-width:none}
+}
+[hidden]{display:none!important}
+html{scroll-padding-top:90px}
+nav{position:sticky;top:10px;flex-wrap:nowrap;margin:10px max(3vw,calc((100vw - 1180px)/2 + 3vw)) -68px;padding:8px 10px 8px 14px;border-radius:99px;background:rgba(12,12,12,.92);color:#fff;border:1px solid rgba(255,239,20,.3);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+nav b{color:#fff}
+nav .nb div{display:block}
+nav .nb small{display:block;font-size:12px;font-weight:400;opacity:.75;line-height:1.1}
+nav a{color:#fff}
+nav a:hover,nav a.on{background:var(--sun);color:var(--ink)}
+nav .nl{flex-wrap:nowrap}
+.mini{background:var(--sun);color:var(--ink)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,5vw,64px);align-items:center;min-height:0;padding-block:calc(68px + clamp(28px,6vh,64px)) clamp(40px,8vh,80px)}
+.hl h1{font-size:clamp(44px,8vw,96px);letter-spacing:-.02em;margin:.1em 0 .25em}
+.wel{font:700 clamp(20px,3vw,30px)/1.2 'Bricolage Grotesque',sans-serif;color:#EDEDE0;margin-top:22px}
+.dsc{color:#D6D6CA;max-width:46ch;font-size:17px}
+.hs{display:flex;gap:26px;margin-top:30px}
+.hsi b{display:block;font:800 40px/1 'Bricolage Grotesque',sans-serif}
+.hsi span{font-size:14px;color:#CFCFC4}
+.hsi span.p::before,.hsi span.l::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.hsi span.p::before{background:var(--sun)}.hsi span.l::before{background:#fff}
+.hbar{display:flex;height:6px;border-radius:99px;overflow:hidden;margin-top:14px;max-width:360px;background:rgba(255,255,255,.15)}
+.hbar i{display:block;width:0;transition:width 1.2s .5s cubic-bezier(.2,.8,.2,1)}
+.hbar .p{background:var(--sun)}.hbar .l{background:#fff}
+.hc{background:rgba(255,255,255,.06);border:1px solid rgba(255,239,20,.35);border-radius:26px;overflow:hidden;rotate:1.2deg;backdrop-filter:blur(6px)}
+.hch{display:flex;justify-content:space-between;align-items:center;background:#000;padding:12px 20px;font-weight:700;font-size:14px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--sun);animation:blink 1s steps(2) infinite}
+.hcb{padding:20px 22px 24px;display:grid;gap:8px}
+.hcb .gr{color:var(--sun);font-weight:700}
+.hc .clock{font-size:clamp(44px,7vw,78px);margin:0}
+.hcb .date{margin:0;color:#EDEDE0;font-size:18px;font-weight:700}
+.hcb hr{border:0;border-top:1px solid rgba(255,255,255,.18);margin:10px 0 4px}
+.hcb .lb{font-size:14px;color:#CFCFC4;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chip{border:2px solid var(--sun);color:var(--sun);border-radius:99px;padding:3px 12px;font-weight:700;font-size:14px}
+.chip.dim{border-color:rgba(255,255,255,.3);color:#CFCFC4}
+.hm{padding-top:clamp(28px,5vw,48px)}
+.qm{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.qc{display:grid;gap:4px;align-content:start;background:#fff;border:2px solid var(--line);border-radius:20px;padding:18px;text-decoration:none;transition:transform .25s,border-color .25s}
+.qc:hover{transform:translateY(-5px);border-color:var(--ink)}
+.qc b{font:800 20px 'Bricolage Grotesque',sans-serif}
+.qc small{color:var(--mut);font-size:13px;line-height:1.35}
+.ic{width:46px;height:46px;border-radius:14px;background:var(--sun);display:grid;place-items:center;font-size:22px;margin-bottom:8px;flex:none}
+.two{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+.card{background:#fff;border:2px solid var(--line);border-radius:24px;padding:22px}
+.chd{display:flex;gap:12px;align-items:center;margin-bottom:12px}.chd .ic{margin:0}
+.chd small{color:var(--mut)}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.kv b{color:var(--mut)}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{border:2px solid var(--line);background:var(--cloud);border-radius:14px;padding:10px 2px;cursor:pointer;display:grid;gap:2px;font:inherit;color:var(--tx);text-align:center;transition:transform .2s,border-color .2s}
+.wd:hover{border-color:var(--ink);transform:translateY(-3px)}
+.wd b{font-size:15px}.wd small{font-size:11px;color:var(--mut)}
+.wd.now{background:var(--ink);border-color:var(--ink);color:var(--sun)}.wd.now small{color:#D8D8CC}
+.quote{background:var(--ink);color:#fff;border-radius:24px;padding:28px}
+.quote p{font:800 clamp(22px,3vw,30px)/1.25 'Bricolage Grotesque',sans-serif;margin-bottom:14px}
+.quote small{color:var(--sun);font-weight:700}
+.cta2{background:linear-gradient(135deg,var(--sun),#FFB800);color:var(--ink);border-radius:24px;padding:28px;text-decoration:none;display:grid;gap:10px;align-content:space-between;transition:transform .25s}
+.cta2:hover{transform:rotate(-1deg) translateY(-4px)}
+.cta2 .btn{background:var(--ink);color:var(--sun);justify-self:start}
+.sec3{font-size:28px;margin:34px 0 14px}
+.adm{overflow:auto;max-height:90vh;padding:22px}
+.adm .ah{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.adm input{width:100%;font:16px 'DM Sans',sans-serif;padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:var(--cloud);color:var(--tx)}
+.adm input:focus{outline:none;border-color:var(--ink)}
+.adm .btn.ghost{color:var(--ink);border-color:var(--ink)}
+.aform{position:static;border:0;padding:0;background:none;grid-template-columns:repeat(2,1fr);gap:12px}
+.aform .wide{grid-column:1/-1}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.adm h4{margin:16px 0 4px}
+.ar{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.ar span:first-child{overflow-wrap:anywhere}
+.ar button{border:2px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;cursor:pointer;margin-left:4px;font:inherit;font-size:13px}
+.adm textarea{min-height:140px;font:13px monospace;margin-top:12px}
+.mut{color:var(--mut)}
+footer.site a{font-weight:700}
+@media(max-width:1000px){nav .nb small{display:none}nav a{padding:6px 11px}}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hc{rotate:0deg}.two{grid-template-columns:1fr}}
+@media(max-width:760px){.hero{padding-top:calc(68px + 24px)}}
+@media(max-width:600px){.hsi b{font-size:32px}.hs{gap:20px}.kv{grid-template-columns:100px 1fr}.wk{gap:4px}.quote{padding:22px}}
+@keyframes mq{to{transform:translateX(-50%)}}
+@keyframes flow{to{stroke-dashoffset:-64}}
+@keyframes pulse{50%{transform:scale(1.9)}}
+@keyframes blink{50%{opacity:.2}}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes glow{50%{box-shadow:0 0 0 10px rgba(255,239,20,.2)}}
+@keyframes float{50%{transform:translateY(-8px) rotate(6deg)}}
+@media(max-width:760px){.cls{grid-template-columns:1fr;gap:6px}.cls .st{text-align:left}.msgwrap{grid-template-columns:1fr}form{position:static}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.hero>*:not(svg){opacity:1}}
+
+/* ===== rapihin layout HP & PC ===== */
+body{overflow-x:clip}
+.hero>*,.hl,.hc,.two>*,.qm>*,.cls>*,.per>div,.msgwrap>*,.stats>*{min-width:0}
+.hc .clock{white-space:nowrap}
+.next,.chip{max-width:100%;overflow-wrap:anywhere}
+.cls .st{max-width:230px}
+.per b{overflow-wrap:anywhere}
+.msg header{flex-wrap:wrap;align-items:center}
+.toast{max-width:90vw;text-align:center}
+dialog footer b{min-width:0;overflow-wrap:anywhere}
+nav{top:max(10px,env(safe-area-inset-top,0px))}
+nav .nb,.mini{flex:none;white-space:nowrap}
+.adm{max-height:90vh;max-height:90dvh}
+.adm .tabs{margin-bottom:14px}
+.ar{flex-wrap:wrap}.al{display:flex;align-items:center;gap:10px;min-width:0}
+.th{width:56px;height:42px;object-fit:cover;border-radius:8px;flex:none}
+@media(min-width:901px){.hc .clock{font-size:clamp(34px,5.2vw,78px)}}
+@media(max-width:900px){nav a{padding:6px 9px;font-size:14px}nav .nl{gap:2px}}
+@media(max-width:760px){.cls .st{max-width:none}}
+@media(max-width:600px){.aform{grid-template-columns:1fr}.kv{grid-template-columns:112px 1fr;gap:8px}.kv b{white-space:nowrap}.adm{padding:16px}.wd b{font-size:13px}.wd small{font-size:10px}}
+@media(max-width:380px){.hsi b{font-size:28px}.hs{gap:14px}.stat{padding:12px 8px}.qc{padding:14px}.tab{padding:8px 14px}.bnav a{font-size:10px}}
+/* ===== ikon gambar (pengganti emoji) ===== */
+.ic img{width:60%;height:60%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none}
+.bnav .nav-icon{width:24px;height:24px;display:block;justify-self:center;background-color:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat;pointer-events:none}
+.ni-home{--ic:url(rumah.png)}.ni-kelas{--ic:url(peserta.png)}.ni-jadwal{--ic:url(jadwal.png)}.ni-galeri{--ic:url(gambar.png)}.ni-pesan{--ic:url(pesan.png)}
+:root{color-scheme:only light}
+.tile img.ph,dialog .big img.ph{position:static;inset:auto;width:38%;max-width:92px;height:auto;aspect-ratio:1;object-fit:contain;padding:10px;box-sizing:border-box;background:var(--cloud);border-radius:22%;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+dialog .big img.ph{width:22%;max-width:130px;padding:16px}
+@media(max-width:600px){.tile img.ph{width:46%;padding:8px}dialog .big img.ph{width:30%;padding:12px}}
+@media(max-width:380px){.bnav .nav-icon{width:22px;height:22px}}
+/* toast: sembunyikan total saat tidak dipakai (sebelumnya masih nongol 12px di bawah nav HP) */
+.toast{visibility:hidden;opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.2,.9,.3,1.3),opacity .25s,visibility 0s .4s}
+.toast.on{visibility:visible;opacity:1;transition:transform .4s cubic-bezier(.2,.9,.3,1.3),opacity .25s,visibility 0s}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<nav><div class="nb"><img src="logo.png" alt="Logo Sistem Informasi"><div><b>SI 26</b><small>Sistem Informasi UNJANI</small></div></div><div class="nl"><a href="#home">Home</a><a href="#struktur">Struktur</a><a href="#anggota">Anggota</a><a href="#jadwal">Jadwal</a><a href="#galeri">Galeri</a><a href="#suara">Pesan</a></div><span class="mini" id="mini" aria-hidden="true"></span></nav>
+<div class="bnav"><a href="#home"><span class="nav-icon ni-home" aria-hidden="true"></span>Home</a><a href="#struktur"><span class="nav-icon ni-kelas" aria-hidden="true"></span>Kelas</a><a href="#jadwal"><span class="nav-icon ni-jadwal" aria-hidden="true"></span>Jadwal</a><a href="#galeri"><span class="nav-icon ni-galeri" aria-hidden="true"></span>Galeri</a><a href="#suara"><span class="nav-icon ni-pesan" aria-hidden="true"></span>Pesan</a></div>
+
+<header class="hero" id="home">
+<svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<path class="flow" d="M80 120 C300 40 420 260 640 180 S980 60 1120 220"/>
+<path class="flow" d="M120 560 C340 460 480 640 700 520 S1000 420 1100 600" style="animation-duration:4s"/>
+<path class="flow" d="M640 180 C600 300 760 400 700 520" style="animation-duration:5s"/>
+<circle class="node" cx="80" cy="120" r="7"/><circle class="node" cx="640" cy="180" r="7" style="animation-delay:.6s"/><circle class="node" cx="1120" cy="220" r="7" style="animation-delay:1.2s"/>
+<circle class="node" cx="120" cy="560" r="7" style="animation-delay:1.8s"/><circle class="node" cx="700" cy="520" r="7" style="animation-delay:.3s"/><circle class="node" cx="1100" cy="600" r="7" style="animation-delay:.9s"/>
+</svg>
+<div class="hl">
+<div class="brand"><img src="logo.png" alt="Logo Sistem Informasi"><p class="sub">Sistem Informasi · Universitas Jenderal Achmad Yani</p></div>
+<p class="wel">Selamat datang di kelas</p>
+<h1>Sistem Informasi 26</h1>
+<p class="dsc">Portal kelas SI 26. Cek jadwal kuliah, kenalan sama teman sekelas, dan kirim kesan atau pesan secara anonim.</p>
+<div class="cta"><a class="btn" href="#anggota">Lihat anggota kelas</a><a class="btn ghost" href="#jadwal">Buka jadwal kuliah</a></div>
+<div class="hs" id="hs"></div>
+<div class="hbar"><i class="p" id="hbp"></i><i class="l" id="hbl"></i></div>
+</div>
+<div class="hc">
+<div class="hch"><span>Kartu Kuliah SI 26</span><span class="dot"></span></div>
+<div class="hcb">
+<p class="gr" id="gr"></p>
+<div class="clock" id="clock">--:--:--</div>
+<div class="date" id="date"></div>
+<hr><p class="lb">Kuliah hari ini</p><div class="chips" id="chips"></div>
+<div><span class="next" id="next">Mencari kuliah berikutnya…</span></div>
+</div>
+</div>
+</header>
+<div class="marq" aria-hidden="true"><div id="mq"></div></div>
+
+<section class="hm">
+<div class="qm">
+<a class="qc" href="#struktur"><span class="ic"><img src="struktur.png" alt="" aria-hidden="true" draggable="false"></span><b>Struktur</b><small>Pengurus dan statistik kelas</small></a>
+<a class="qc" href="#anggota"><span class="ic"><img src="peserta.png" alt="" aria-hidden="true" draggable="false"></span><b>Anggota</b><small>Profil seluruh mahasiswa</small></a>
+<a class="qc" href="#jadwal"><span class="ic"><img src="jadwal.png" alt="" aria-hidden="true" draggable="false"></span><b>Jadwal</b><small>Kuliah tiap hari</small></a>
+<a class="qc" href="#galeri"><span class="ic"><img src="gambar.png" alt="" aria-hidden="true" draggable="false"></span><b>Galeri</b><small>Kenangan kelas</small></a>
+<a class="qc" href="#suara"><span class="ic"><img src="pesan.png" alt="" aria-hidden="true" draggable="false"></span><b>Pesan</b><small>Kesan dan keluhan anonim</small></a>
+</div>
+<div class="two">
+<div class="card"><div class="chd"><span class="ic"><img src="tas.png" alt="" aria-hidden="true" draggable="false"></span><div><h3>Siapkan untuk besok</h3><small id="bsk-d"></small></div></div><div id="bsk"></div></div>
+<div class="card"><div class="chd"><span class="ic"><img src="jadwal.png" alt="" aria-hidden="true" draggable="false"></span><div><h3>Minggu ini</h3><small>Klik hari untuk lihat jadwalnya</small></div></div><div class="wk" id="wk"></div></div>
+</div>
+<div class="two">
+<div class="quote"><p>Satu baris kode sehari, lama-lama jadi sistem. Pelan boleh, berhenti jangan.</p><small>Motivasi SI 26</small></div>
+<a class="cta2" href="#suara"><h3>Tulis kesan dan pesan</h3><p>Anonim, tanpa nama, langsung kirim.</p><span class="btn">Tulis sekarang</span></a>
+</div>
+</section>
+
+<section id="struktur">
+<h2>Struktur kelas</h2>
+<p class="lead">Komposisi kelas dan seluruh mahasiswa SI 26.</p>
+<div class="stats" id="stats"></div>
+<div class="ratio" aria-hidden="true"><div class="rl" id="rl"></div><div class="rp" id="rp"></div></div>
+<div class="org" id="pengurus"></div>
+<h3 class="sec3" id="anggota">Anggota kelas</h3>
+<div class="pick"><h3>Siapa yang kena giliran?</h3><div class="out" id="pk">Tekan tombol di bawah</div><small id="pks" aria-live="polite">Acak buat presentasi, piket, atau traktiran</small><div class="cta" style="justify-content:center;margin:0"><button class="btn" data-s="">Acak siapa saja</button><button class="btn ghost" data-s="L">Cowok</button><button class="btn ghost" data-s="P">Cewek</button></div></div>
+<div class="fbar"><div class="tabs" id="ft"></div><input id="q" type="search" placeholder="Cari nama atau NIM" aria-label="Cari mahasiswa"></div>
+<div class="all" id="all"></div>
+</section>
+
+<section id="jadwal">
+<h2>Jadwal kuliah</h2>
+<p class="lead">Status tiap mata kuliah mengikuti jam WIB (Asia/Jakarta), jadi tetap akurat walau perangkatmu beda zona waktu.</p>
+<div class="tabs" id="tabs" role="tablist"></div>
+<div class="list" id="list"></div>
+</section>
+
+<section id="galeri">
+<h2>Galeri</h2>
+<p class="lead">Klik foto untuk memperbesar.</p>
+<div class="gal" id="gal"></div>
+<dialog id="lb"><div class="big" id="lbBig"></div><footer><button class="btn" id="lbP" aria-label="Foto sebelumnya">‹</button><b id="lbCap"></b><span class="lbb"><button class="btn" id="lbN" aria-label="Foto berikutnya">›</button><button class="btn" id="lbX">Tutup</button></span></footer></dialog>
+</section>
+
+<section id="suara">
+<h2>Kesan, pesan &amp; keluhan</h2>
+<p class="lead">Tulis apa saja tanpa nama. Tidak ada data diri yang diminta.</p>
+<div class="msgwrap">
+<form id="f">
+<div><label for="tp">Jenis</label><select id="tp"><option>Kesan</option><option>Pesan</option><option>Keluhan</option></select></div>
+<div><label for="tx">Isi (maks. 400 karakter)</label><textarea id="tx" maxlength="400" required placeholder="Tulis di sini…"></textarea></div>
+<button class="btn" style="background:var(--ink);color:var(--sun)">Kirim anonim</button>
+<small id="cnt">0/400</small>
+</form>
+<div class="msgs" id="msgs"></div>
+</div>
+</section>
+
+<footer class="site">SI 26 · Dibuat dengan semangat begadang tugas ✨ · <a href="#admin" id="aOpen">Admin</a></footer>
+<dialog id="adm" class="adm">
+<div class="ah"><h3>Panel admin</h3><button class="btn" id="aX" type="button">Tutup</button></div>
+<div id="aLock"><p class="mut" id="aHint" style="margin-bottom:10px"></p><div style="display:grid;gap:8px"><input id="aEm" type="email" placeholder="Email admin" autocomplete="username" aria-label="Email admin" hidden><input id="aPin" type="password" placeholder="PIN / password" autocomplete="off" aria-label="Password admin"></div><div class="acts"><button class="btn" id="aGo" type="button">Masuk</button></div><small id="aErr" style="color:#C0392B"></small></div>
+<div id="aBody" hidden>
+<small class="mut" id="aNote"></small>
+<div class="tabs" id="aT" role="tablist" style="margin-top:10px"></div>
+<div id="p0">
+<form class="aform" id="aF">
+<div><label for="aD">Hari</label><select id="aD"></select></div>
+<div><label for="aK">Kode MK</label><input id="aK" placeholder="SI611021"></div>
+<div><label for="aS">Mulai (WIB)</label><input id="aS" type="time" required></div>
+<div><label for="aE">Selesai (WIB)</label><input id="aE" type="time" required></div>
+<div class="wide"><label for="aN">Nama mata kuliah</label><input id="aN" required placeholder="Nama mata kuliah"></div>
+<div class="wide acts" style="margin:0"><button class="btn" id="aSave">Tambah jadwal</button><button class="btn ghost" id="aCancel" type="button" hidden>Batal ubah</button></div>
+</form>
+<div id="aL"></div>
+</div>
+<div id="p1" hidden>
+<form class="aform" id="mF2">
+<div class="wide"><label for="mI">Mata kuliah</label><select id="mI"></select></div>
+<div><label for="mF">Tanggal kuliah asli</label><input id="mF" type="date"></div>
+<div><label for="mT">Pindah ke tanggal</label><input id="mT" type="date"></div>
+<div><label for="mS">Jam mulai (WIB)</label><input id="mS" type="time"></div>
+<div><label for="mE">Jam selesai (WIB)</label><input id="mE" type="time"></div>
+<div class="wide"><label for="mN">Catatan (opsional)</label><input id="mN" placeholder="Contoh: dosen berhalangan"></div>
+<div class="wide acts" style="margin:0"><button class="btn" id="mSave">Geser kuliah</button><button class="btn ghost" id="mCx" type="button">Dosen tidak masuk</button></div>
+</form>
+<h4>Pergeseran aktif</h4><div id="mL"></div>
+</div>
+<div id="p2" hidden>
+<form class="aform" id="fF">
+<div class="wide"><label for="fC">Nama dokumentasi</label><input id="fC" placeholder="Contoh: Makrab SI 26"></div>
+<div class="wide"><label for="fI">Gambar</label><input id="fI" type="file" accept="image/*"></div>
+<div class="wide acts" style="margin:0"><button class="btn" id="fSave">Upload foto</button></div>
+</form>
+<h4>Dokumentasi</h4><div id="fL"></div>
+</div>
+<div class="acts"><button class="btn ghost" id="aRst" type="button">Reset jadwal ke bawaan</button><button class="btn ghost" id="aOut" type="button">Keluar admin</button></div>
+</div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ====== DATA: ganti sesuai kelasmu ====== */
+const JADWAL_DEFAULT=[ // d: 0=Minggu, 1=Senin ... 6=Sabtu | jam 24 jam WIB | k = kode MK
+ {d:1,s:'07:00',e:'09:50',k:'SI611021',n:'Konsep Sistem Informasi'},
+ {d:1,s:'10:00',e:'12:50',k:'SI611061',n:'Proses Bisnis'},
+ {d:1,s:'13:00',e:'14:50',k:'SI613061',n:'Praktikum Algoritma dan Pemrograman'},
+ {d:2,s:'13:00',e:'14:50',k:'SI613063',n:'Praktikum Proses Bisnis'},
+ {d:2,s:'15:00',e:'16:50',k:'SI613062',n:'Praktikum Konsep Sistem Informasi'},
+ {d:3,s:'07:00',e:'08:50',k:'WN611103',n:'Bahasa Indonesia'},
+ {d:3,s:'09:00',e:'11:50',k:'SI611051',n:'Algoritma dan Pemrograman'},
+ {d:4,s:'07:00',e:'08:50',k:'WU611101',n:'Latihan Dasar Kedisiplinan'},
+ {d:4,s:'09:00',e:'10:50',k:'WN611101',n:'Pendidikan Pancasila'},
+ {d:4,s:'15:00',e:'16:50',k:'WN611102',n:'Pendidikan Agama'}
+];
+const DAYORD=[1,2,3,4,5,6,0];
+const norm=a=>a.map(x=>({...x,id:x.id||(x.k||'x')+'-'+x.d+x.s.replace(':','')}));
+let JADWAL=norm(JADWAL_DEFAULT.map(x=>({...x}))),MOVES=[];
+const ORG={ // isi nama pengurus persis seperti di MHS; yang dikosongkan tidak ditampilkan
+ top:{r:'Ketua Kelas',n:''},
+ mid:[{r:'Wakil Ketua',n:''},{r:'Sekretaris',n:''},{r:'Bendahara',n:''}]
+};
+const MHS=[ // [NIM, nama, jk] jk: L = cowok, P = cewek
+ ['2650231001','Bunga Saadatun Najiyah','P'],['2650231002','Nizar Irwansyah','L'],['2650231003','Hadi Iman Priyatna','L'],
+ ['2650231004','Mochamad Febian Eltiyo El Sirzy','L'],['2650231005','Naufal Zaki Simarmata','L'],['2650231006','Samuel Christian','L'],
+ ['2650231007','Dhini Jayanti Khoirutunnisa','P'],['2650231008','Yuro Euaggelion Sinaga','L'],['2650231009','Shaina Inessa Rianti','P'],
+ ['2650231010','Neng Rosma','P'],['2650231011','Halidazia Fathoni','P'],['2650231012','Sani Aulia Kusaery','P'],
+ ['2650231013','Fairuz Dhiya Eren','P'],['2650231014','Ervan Maulana Yusuf','L'],['2650231015','Fahrizal Munsidi','L'],
+ ['2650231016','Varell Latsitara Akbar','L'],['2650231017','Handika Syafri Rijalul','L'],['2650231018','Nathasya Annabell Calista','P'],
+ ['2650231019','Muhammad Alfajr Khabibullah Said','L'],['2650231020','Niswah Hasanah','P'],['2650231021','Renaldi Firmansyah','L'],
+ ['2650231022','Bergas Ahza Margosha','L'],['2650231023','Mochamad Fais Aldiansyah','L'],['2650231024','Safira Putri Lestari','P'],
+ ['2650231025','Muhammad Rifqi Tangguh Machfud','L'],['2650231026','Zoan Christopher L. Gaol','L'],['2650231027','Anisa Nurul Zakiyah','P'],
+ ['2650231028','Virma Rahma Aulia','P'],['2650231029','Dimas Aleandro','L'],['2650231030','Nina Aminah','P'],
+ ['2650231031','Halwa Yajria','P']
+];
+const GAL0=[ // isi src dengan path foto, mis. 'img/foto1.jpg'. Kosong = placeholder
+
+];
+let GALERI=GAL0;
+
+/* ====== UTIL ====== */
+const $=s=>document.querySelector(s);
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const EN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const tm=s=>{const[a,b]=s.split(':');return +a*60+ +b};
+const dur=n=>{const h=Math.floor(n/60),m=n%60;return(h?h+' jam ':'')+m+' menit'};
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const ini=n=>n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const PAL=[['#0C0C0C','#FFEF14'],['#FFEF14','#0C0C0C'],['#2B2B2B','#FFEF14'],['#FFF67A','#0C0C0C']];
+const pal=i=>PAL[i%4];
+function wib(){
+ const p={};
+ new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Jakarta',weekday:'long',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).forEach(x=>p[x.type]=x.value);
+ const h=+p.hour,m=+p.minute;
+ return{d:EN.indexOf(p.weekday),dt:p.year+'-'+p.month+'-'+p.day,min:h*60+m,hh:p.hour,mm:p.minute,ss:p.second};
+}
+function toast(t) {
+const e = $('#toast');
+
+e.textContent = t;
+e.classList.add('on');
+
+clearTimeout(toast.t);
+
+toast.t = setTimeout(() => {
+    e.classList.remove('on');
+}, 2500);
+
+}
+
+/* ====== DATA (isi CFG = online & dipakai bersama; kosong = tersimpan di browser saja) ====== */
+/* FIRESTORE RULES (Firebase Console > Firestore > Rules), ganti ADMIN@EMAIL:
+rules_version='2';service cloud.firestore{match /databases/{d}/documents{
+ function adm(){return request.auth!=null&&request.auth.token.email=='ADMIN@EMAIL'}
+ match /site/{i}{allow read:if true;allow write:if adm()}
+ match /foto/{i}{allow read:if true;allow write:if adm()}
+ match /pesan/{i}{allow read:if true;
+  allow create:if request.auth!=null&&request.resource.data.uid==request.auth.uid&&request.resource.data.x.size()<=400;
+  allow update:if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['r']);
+  allow delete:if request.auth!=null&&(resource.data.uid==request.auth.uid||adm())}}} */
+const CFG={
+ apiKey:'AIzaSyBkEW2hjJPZiL5uD8F8Ntaan3T0hzclfhk',
+ authDomain:'sistem-informasi-2026.firebaseapp.com',
+ projectId:'sistem-informasi-2026',
+ appId:'1:223192423674:web:229b4edbdbd242e69f7d43',
+ // WAJIB ganti dengan email akun admin yang dibuat di Firebase Authentication
+ adminEmail:'stockryuu012@gmail.com'
+};
+const ON=!!(CFG.apiKey&&CFG.authDomain&&CFG.projectId&&window.firebase);
+let UID=null,ADM=false,onAuth=()=>{},aDraw=()=>{},aSync=()=>{},fdb,auth;
+const lget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const lset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Penyimpanan penuh, kecilkan ukuran foto')}};
+if(ON){
+ firebase.initializeApp(CFG);fdb=firebase.firestore();auth=firebase.auth();
+ auth.onAuthStateChanged(u=>{
+  if(!u){auth.signInAnonymously().catch(()=>toast('Login anonim gagal, aktifkan Anonymous di Firebase'));return}
+  UID=u.uid;ADM=!u.isAnonymous&&u.email===CFG.adminEmail;onAuth();
+ });
+}else UID=lget('si26_uid')||(()=>{const v='u'+Math.random().toString(36).slice(2);lset('si26_uid',v);return v})();
+function col(n){
+ if(fdb){const c=fdb.collection(n);return{
+  sub:cb=>c.orderBy('at','desc').limit(300).onSnapshot(q=>cb(q.docs.map(d=>({...d.data(),id:d.id}))),e=>console.error(e)),
+  add:o=>c.add({...o,at:Date.now()}),del:id=>c.doc(id).delete(),upd:(id,p)=>c.doc(id).update(p),
+  inc:(id,k)=>c.doc(id).update({['r.'+k]:firebase.firestore.FieldValue.increment(1)})}}
+ const K='si26_'+n,all=()=>lget(K)||[],subs=[],fire=()=>subs.forEach(f=>f(all().sort((a,b)=>b.at-a.at)));
+ return{sub:cb=>{subs.push(cb);fire()},
+  add:o=>{lset(K,[...all(),{...o,id:Date.now()+''+Math.random(),at:Date.now()}]);fire()},
+  del:id=>{lset(K,all().filter(x=>x.id!==id));fire()},
+  upd:(id,p)=>{lset(K,all().map(x=>x.id===id?{...x,...p}:x));fire()},
+  inc:(id,k)=>{lset(K,all().map(x=>{if(x.id!==id)return x;const r={...(x.r||{})};r[k]=(r[k]||0)+1;return{...x,r}}));fire()}}
+}
+const site={
+ sub:cb=>{if(fdb)fdb.doc('site/jadwal').onSnapshot(q=>cb(q.exists?q.data():null),e=>{console.error('Firestore site/jadwal:',e);toast('Firebase: gagal membaca jadwal. Periksa Firestore Rules.')});else cb(lget('si26_site'))},
+ set:o=>{if(fdb)return fdb.doc('site/jadwal').set(o).catch(e=>{console.error('Simpan jadwal:',e);toast('Gagal menyimpan jadwal. Periksa akun admin dan Rules.')});lset('si26_site',o)}
+};
+const dow=dt=>new Date(dt+'T00:00:00Z').getUTCDay();
+const addD=(dt,n)=>new Date(Date.parse(dt+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+const weekDate=d=>{const t=wib().dt;return addD(t,DAYORD.indexOf(d)-(dow(t)+6)%7)};
+const tgl=dt=>new Date(dt+'T00:00:00Z').toLocaleDateString('id-ID',{timeZone:'UTC',day:'numeric',month:'short'});
+function occ(dt,all){ // kuliah pada tanggal tertentu, sudah memperhitungkan pergeseran
+ const w=dow(dt),o=[];
+ JADWAL.forEach(j=>{if(j.d!==w)return;const m=MOVES.find(m=>m.id===j.id&&m.from===dt);if(!m)o.push({...j,dt});else if(all)o.push({...j,dt,cx:m})});
+ MOVES.forEach(m=>{if(m.to!==dt)return;const j=JADWAL.find(x=>x.id===m.id);if(j)o.push({...j,s:m.s||j.s,e:m.e||j.e,dt,mv:m})});
+ return o.sort((a,b)=>tm(a.s)-tm(b.s));
+}
+
+/* ====== JADWAL ====== */
+let sel=1,hd=-1;
+function renderTabs(){
+ const t=wib(),box=$('#tabs');box.textContent='';
+ DAYORD.forEach(d=>{
+  const b=el('button','tab',HARI[d]);b.setAttribute('role','tab');b.setAttribute('aria-selected',d===sel);
+  if(d===t.d)b.append(el('em',null,'hari ini'));
+  b.onclick=()=>{sel=d;renderTabs();renderList()};box.append(b);
+ });
+}
+function renderList(){
+ const box=$('#list');box.textContent='';
+ const items=occ(weekDate(sel),true);
+ if(!items.length){box.append(el('div','empty','Tidak ada kuliah di hari ini. Waktunya istirahat atau ngerjain laprak.'));return}
+ items.forEach((j,i)=>{
+  const c=el('div','cls');c.style.animationDelay=i*70+'ms';c._j=j;
+  const t=el('div','t',j.s);t.append(el('small',null,'s/d '+j.e+' WIB'));
+  const mid=el('div');mid.append(el('h3',null,j.n),el('p',null,'Kode '+j.k+' · '+Math.round((tm(j.e)-tm(j.s)+10)/60)+' jam'+(j.mv?' · Pindahan dari '+HARI[j.d]+', '+tgl(j.mv.from):'')+((j.mv||j.cx||{}).note?' · '+(j.mv||j.cx).note:'')));
+  c.append(t,mid,el('div','st'));box.append(c);
+ });
+ tickStatus();
+}
+function tickStatus(){
+ const t=wib();
+ document.querySelectorAll('.cls').forEach(c=>{
+  const j=c._j,st=c.querySelector('.st');
+  c.classList.remove('live','done');
+  if(j.cx){c.classList.add('done');st.textContent=j.cx.to?'Digeser ke '+HARI[dow(j.cx.to)]+', '+tgl(j.cx.to)+' · '+j.cx.s:'Dosen tidak masuk';return}
+  if(j.dt!==t.dt){st.textContent=HARI[j.d]+', '+tgl(j.dt);return}
+  const s=tm(j.s),e=tm(j.e);
+  if(t.min<s)st.textContent='Mulai '+dur(s-t.min)+' lagi';
+  else if(t.min<e){c.classList.add('live');c.style.setProperty('--p',((t.min-s)/(e-s)*100).toFixed(1)+'%');st.textContent='Sedang berlangsung · sisa '+dur(e-t.min)}
+  else{c.classList.add('done');st.textContent='Selesai'}
+ });
+}
+function nextClass(t){
+ for(let off=0;off<=7;off++){
+  const dt=addD(t.dt,off);
+  for(const j of occ(dt)){
+   if(off===0&&tm(j.e)<=t.min)continue;
+   return{j,off,dt,d:dow(dt),live:off===0&&tm(j.s)<=t.min};
+  }
+ }
+ return null;
+}
+function tick(){
+ const t=wib();
+ $('#clock').innerHTML=`${t.hh}<i>:</i>${t.mm}<i>:</i>${t.ss}<small>WIB</small>`;
+ const hr=Math.floor(t.min/60),gr=hr<4?'Dini hari':hr<11?'Selamat pagi':hr<15?'Selamat siang':hr<18?'Selamat sore':'Selamat malam';
+ $('#mini').textContent=t.hh+':'+t.mm+' WIB';
+ $('#gr').textContent=gr+', SI 26';
+ $('#date').textContent=HARI[t.d]+', '+new Date().toLocaleDateString('id-ID',{timeZone:'Asia/Jakarta',day:'numeric',month:'long',year:'numeric'});
+ if(t.dt!==hd){hd=t.dt;renderHome()}
+ const n=nextClass(t),box=$('#next');
+ box.classList.toggle('live',!!(n&&n.live));
+ if(!n)box.textContent='Belum ada jadwal kuliah.';
+ else if(n.live)box.textContent=`Sedang berlangsung: ${n.j.n} · ${n.j.k} · sisa ${dur(tm(n.j.e)-t.min)}`;
+ else if(n.off===0)box.textContent=`Berikutnya: ${n.j.n} jam ${n.j.s} WIB · ${dur(tm(n.j.s)-t.min)} lagi`;
+ else box.textContent=`Berikutnya: ${n.j.n} · ${HARI[n.d]}, ${tgl(n.dt)} ${n.j.s} WIB`;
+ tickStatus();
+}
+sel=wib().d;
+function renderHome(){
+ const t=wib(),nx=(t.d+1)%7,ch=$('#chips');ch.textContent='';
+ const td=occ(t.dt);
+ if(!td.length)ch.append(el('span','chip dim','Tidak ada kuliah'));
+ td.forEach(j=>ch.append(el('span','chip',j.n)));
+ $('#bsk-d').textContent='Esok hari: '+HARI[nx];
+ const bb=$('#bsk');bb.textContent='';const tmr=occ(addD(t.dt,1));
+ if(!tmr.length)bb.append(el('p','mut','Besok nggak ada kuliah. Waktunya istirahat atau nyicil tugas.'));
+ tmr.forEach(j=>{const r=el('div','kv');r.append(el('b',null,j.s+' – '+j.e),el('span',null,j.n+(j.k?' ('+j.k+')':'')));bb.append(r)});
+ const wk=$('#wk');wk.textContent='';
+ DAYORD.forEach(d=>{
+  const n=occ(weekDate(d)).length,b=el('button','wd'+(d===t.d?' now':''));
+  b.append(el('b',null,HARI[d].slice(0,3)),el('small',null,n?n+' MK':'libur'));
+  b.onclick=()=>{sel=d;renderTabs();renderList();$('#jadwal').scrollIntoView({behavior:'smooth'})};wk.append(b);
+ });
+}
+function marq(){const box=$('#mq');box.textContent='';const names=[...new Set(JADWAL.map(j=>j.n))];for(let k=0;k<2;k++)names.forEach(n=>box.append(el('span',null,n),el('span',null,'✦')))}
+function refreshAll(){renderTabs();renderList();renderHome();marq();tick()}
+refreshAll();setInterval(tick,1000);
+
+/* ====== STRUKTUR & STATISTIK ====== */
+const TOT=MHS.length,NL=MHS.filter(m=>m[2]==='L').length,NP=TOT-NL,PCT=Math.round(NL/TOT*100);
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches,RUN=!RM&&'IntersectionObserver' in window;
+function person(role,name,sex,big,i){
+ const p=el('div','per'+(big?' big':''));
+ if(i!=null)p.style.animationDelay=Math.min(i*25,500)+'ms';
+ const a=el('div','av '+(sex==='P'?'p':'l'),ini(name));
+ if(big){a.style.background='#FFEF14';a.style.color='#0C0C0C'}
+ const w=el('div');w.append(el('b',null,name),el('small',null,role));p.append(a,w);return p;
+}
+function count(e,to){const t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/1100);e.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}
+(()=>{
+ const st=$('#stats'),rl=$('#rl'),rp=$('#rp');
+ const hs=$('#hs');[['Mahasiswa',TOT,''],['Cewek',NP,'p'],['Cowok',NL,'l']].forEach(([lb,n,c])=>{const d=el('div','hsi');d.append(el('b',null,n),el('span',c,lb));hs.append(d)});
+ setTimeout(()=>{$('#hbp').style.width=(NP/TOT*100)+'%';$('#hbl').style.width=(NL/TOT*100)+'%'},300);
+ [['Total mahasiswa',TOT,'t'],['Cowok',NL,'l'],['Cewek',NP,'p']].forEach(([lb,n,c])=>{
+  const d=el('div','stat '+c),b=el('div','num',RUN?0:n);b.dataset.to=n;d.append(b,el('div','lbl',lb));st.append(d);
+ });
+ rl.textContent='Cowok '+NL+' · '+PCT+'%';rp.textContent='Cewek '+NP+' · '+(100-PCT)+'%';
+ const go=()=>{rl.style.width=PCT+'%';rp.style.width=(100-PCT)+'%';document.querySelectorAll('.num').forEach(e=>count(e,+e.dataset.to))};
+ if(RUN)new IntersectionObserver((es,ob)=>{if(es[0].isIntersecting){go();ob.disconnect()}},{threshold:.35}).observe(st);
+ else{rl.style.width=PCT+'%';rp.style.width=(100-PCT)+'%'}
+
+ const sexOf=n=>{const f=MHS.find(m=>m[1]===n);return f?f[2]:'L'};
+ const po=$('#pengurus'),r1=el('div','row'),r2=el('div','row');
+ if(ORG.top.n)r1.append(person(ORG.top.r,ORG.top.n,sexOf(ORG.top.n),true));
+ ORG.mid.filter(x=>x.n).forEach(x=>r2.append(person(x.r,x.n,sexOf(x.n))));
+ if(r1.children.length||r2.children.length){po.append(el('h3',null,'Pengurus kelas'));[r1,r2].forEach(r=>r.children.length&&po.append(r))}
+
+ let f='all',q='';const ft=$('#ft');
+ const chips=[['all','Semua ('+TOT+')'],['L','Cowok ('+NL+')'],['P','Cewek ('+NP+')']];
+ function chipsDraw(){ft.textContent='';chips.forEach(([k,l])=>{const b=el('button','tab',l);b.setAttribute('aria-selected',f===k);b.onclick=()=>{f=k;chipsDraw();listDraw()};ft.append(b)})}
+ function listDraw(){
+  const box=$('#all');box.textContent='';
+  const list=MHS.filter(m=>(f==='all'||m[2]===f)&&(m[1]+' '+m[0]).toLowerCase().includes(q));
+  if(!list.length){box.append(el('div','empty','Tidak ada yang cocok dengan pencarianmu.'));return}
+  list.forEach((m,i)=>box.append(person(m[0]+' · '+(m[2]==='P'?'Cewek':'Cowok'),m[1],m[2],false,i)));
+ }
+ $('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();listDraw()};
+ chipsDraw();listDraw();
+})();
+
+/* ====== EFEK & ACAK NAMA ====== */
+function boom(src,n=28){
+ if(RM)return;const r=src.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+ for(let i=0;i<n;i++){const c=document.createElement('i');c.className='cf';
+  c.style.cssText=`left:${cx}px;top:${cy}px;--dx:${(Math.random()-.5)*360}px;--dy:${-80-Math.random()*220}px;--r:${Math.random()*720}deg;background:${['#FFEF14','#0C0C0C','#fff','#FF7A1A'][i%4]}`;
+  document.body.append(c);setTimeout(()=>c.remove(),1100)}
+}
+(()=>{
+ const out=$('#pk'),sub=$('#pks'),bs=document.querySelectorAll('.pick [data-s]');
+ bs.forEach(b=>b.onclick=()=>{
+  const pool=MHS.filter(m=>!b.dataset.s||m[2]===b.dataset.s);let n=0;
+  bs.forEach(x=>x.disabled=true);out.classList.remove('fin');sub.textContent='';
+  const end=m=>{out.textContent=m[1];out.classList.add('fin');sub.textContent=m[0]+' · '+(m[2]==='P'?'Cewek':'Cowok');bs.forEach(x=>x.disabled=false);boom(out)};
+  (function step(){
+   const m=pool[Math.floor(Math.random()*pool.length)];
+   if(RM||n>=20){end(m);return}
+   out.textContent=m[1];n++;setTimeout(step,60+n*n*.4);
+  })();
+ });
+})();
+
+/* ====== GALERI ====== */
+let galDraw=()=>{};
+(()=>{
+ const g=$('#gal'),lb=$('#lb'),big=$('#lbBig');let cur=0;
+ const ph=()=>{const i=el('img','ph');i.src='gambar.png';i.alt='';i.draggable=false;return i};
+ const bgOf=i=>`linear-gradient(135deg,${pal(i)[0]},${pal(i+1)[0]})`;
+ function show(i){
+  cur=(i+GALERI.length)%GALERI.length;const f=GALERI[cur];
+  big.textContent='';big.style.background=bgOf(cur);
+  if(f.src){const im=el('img');im.src=f.src;im.alt=f.cap;big.append(im)}else big.append(ph());
+  $('#lbCap').textContent=f.cap+' · '+(cur+1)+'/'+GALERI.length;
+ }
+ galDraw=()=>{g.textContent='';GALERI.forEach((f,i)=>{
+  const b=el('button','tile');b.style.animationDelay=i*60+'ms';b.setAttribute('aria-label','Buka foto: '+f.cap);
+  b.style.background=bgOf(i);
+  if(f.src){const im=el('img');im.src=f.src;im.alt=f.cap;im.loading='lazy';b.append(im)}else b.append(ph());
+  b.append(el('span',null,f.cap));b.onclick=()=>{show(i);lb.showModal()};g.append(b);
+ })};galDraw();
+ $('#lbX').onclick=()=>lb.close();$('#lbP').onclick=()=>show(cur-1);$('#lbN').onclick=()=>show(cur+1);
+ lb.onclick=e=>{if(e.target===lb)lb.close()};
+ lb.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
+ let x0=null;
+ big.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+ big.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)show(cur+(dx<0?1:-1));x0=null});
+})();
+
+/* ====== PESAN (chat log publik, hapus hanya pesan sendiri) ====== */
+const pesan=col('pesan');let MSGS=[],NEW=false;
+function renderMsgs(){
+ const box=$('#msgs'),fresh=NEW;NEW=false;box.textContent='';
+ if(!MSGS.length){box.append(el('div','empty','Belum ada pesan. Jadi yang pertama menulis.'));return}
+ MSGS.forEach((m,i)=>{
+  const c=el('article','msg '+m.t);if(!fresh||i)c.style.animation='none';
+  const h=el('header');
+  const when=new Date(m.at).toLocaleString('id-ID',{timeZone:'Asia/Jakarta',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+  const l=el('span');l.append(el('b',null,m.t),document.createTextNode(' · Anonim · '+when+' WIB'));h.append(l);
+  if((UID&&m.uid===UID)||ADM){const del=el('button',null,'hapus');del.onclick=()=>{if(confirm('Hapus pesan ini?'))pesan.del(m.id)};h.append(del)}
+  const rx=el('div','rx');
+  [['👍','a'],['😂','b'],['❤️','c']].forEach(([e,k])=>{
+   const b=el('button',null,e+' '+((m.r&&m.r[k])||0));b.setAttribute('aria-label','Reaksi '+e);
+   b.onclick=()=>{pesan.inc(m.id,k);boom(b,10)};rx.append(b);
+  });
+  c.append(h,el('p',null,m.x),rx);box.append(c);
+ });
+}
+$('#tx').oninput=e=>$('#cnt').textContent=e.target.value.length+'/400';
+$('#f').onsubmit=e=>{
+ e.preventDefault();
+ const x = $('#tx').value.trim();
+if (!x) return;
+
+if (!UID) {
+toast('Tunggu sebentar, menyambungkan…');
+return;
+}
+
+NEW = true;
+
+Promise.resolve(pesan.add({
+t: $('#tp').value,
+x,
+uid: UID,
+r: {}
+}))
+.then(() => {
+toast('Terkirim secara anonim');
+})
+.catch(() => {
+toast('Gagal mengirim pesan');
+});
+
+$('#tx').value = '';
+$('#cnt').textContent = '0/400';
+boom($('#f .btn'));
+};
+
+/* ====== PANEL ADMIN ====== */
+const ADMIN_PIN='si26admin'; // PIN lokal saja; untuk online gunakan Firebase Authentication
+const foto=col('foto');let FOTO=[];
+function applySite(d){
+ if(d&&Array.isArray(d.items)){JADWAL=norm(d.items.filter(x=>x&&typeof x.n==='string'&&x.s&&x.e&&x.d>=0&&x.d<=6));MOVES=Array.isArray(d.moves)?d.moves:[]}
+ else{JADWAL=norm(JADWAL_DEFAULT.map(x=>({...x})));MOVES=[]}
+ refreshAll();aDraw();
+}
+(()=>{
+ const dlg=$('#adm'),lock=$('#aLock'),body=$('#aBody'),sd=$('#aD'),mi=$('#mI');let ed=-1,pn=0;
+ DAYORD.forEach(d=>sd.append(new Option(HARI[d],d)));
+ const sess=()=>{try{return sessionStorage.getItem('si26_adm')==='1'}catch(e){return false}};
+ if(!ON)ADM=sess();
+ const save=()=>{MOVES=MOVES.filter(m=>(m.to||m.from)>=addD(wib().dt,-30));site.set({items:JADWAL,moves:MOVES});refreshAll();draw()};
+ function view(){
+  lock.hidden=ADM;body.hidden=!ADM;$('#aEm').hidden=!ON;
+  $('#aHint').textContent=ON?'Masuk dengan akun admin.':'Masukkan PIN admin.';
+  $('#aNote').textContent=ON?'Perubahan langsung terlihat oleh semua orang.':'Firebase belum diisi, perubahan hanya tersimpan di browser ini.';
+  if(ADM){tabs();draw()}
+ }
+ function tabs(){
+  const b=$('#aT');b.textContent='';
+  ['Jadwal','Geser kuliah','Dokumentasi'].forEach((l,i)=>{const t=el('button','tab',l);t.type='button';t.setAttribute('aria-selected',i===pn);t.onclick=()=>{pn=i;tabs()};b.append(t)});
+  [0,1,2].forEach(k=>$('#p'+k).hidden=k!==pn);
+ }
+ function reset(){ed=-1;$('#aF').reset();$('#aSave').textContent='Tambah jadwal';$('#aCancel').hidden=true}
+ function defMv(){const j=JADWAL.find(x=>x.id===mi.value);if(!j)return;let dt=wib().dt;while(dow(dt)!==j.d)dt=addD(dt,1);$('#mF').value=dt;$('#mT').value=dt;$('#mS').value=j.s;$('#mE').value=j.e}
+ function draw(){
+  const box=$('#aL');box.textContent='';
+  DAYORD.forEach(d=>{
+   const it=JADWAL.map((j,i)=>[j,i]).filter(x=>x[0].d===d).sort((a,b)=>tm(a[0].s)-tm(b[0].s));
+   box.append(el('h4',null,HARI[d]+' · '+it.length+' kuliah'));
+   if(!it.length)box.append(el('p','mut','Kosong'));
+   it.forEach(([j,i])=>{
+    const r=el('div','ar'),b=el('span',null,j.s+'–'+j.e+' · '+(j.k?j.k+' · ':'')+j.n),act=el('span');
+    const eb=el('button',null,'Ubah'),db=el('button',null,'Hapus');
+    eb.onclick=()=>{ed=i;sd.value=j.d;$('#aS').value=j.s;$('#aE').value=j.e;$('#aK').value=j.k||'';$('#aN').value=j.n;$('#aSave').textContent='Simpan perubahan';$('#aCancel').hidden=false;$('#aF').scrollIntoView({behavior:'smooth',block:'center'})};
+    db.onclick=()=>{if(confirm('Hapus '+j.n+'?')){MOVES=MOVES.filter(m=>m.id!==j.id);JADWAL.splice(i,1);reset();save()}};
+    act.append(eb,db);r.append(b,act);box.append(r);
+   });
+  });
+  const keep=mi.value;mi.textContent='';
+  JADWAL.slice().sort((a,b)=>DAYORD.indexOf(a.d)-DAYORD.indexOf(b.d)||tm(a.s)-tm(b.s)).forEach(j=>mi.append(new Option(HARI[j.d]+' '+j.s+' · '+j.n,j.id)));
+  if(keep)mi.value=keep;if(!$('#mF').value)defMv();
+  const ml=$('#mL');ml.textContent='';
+  if(!MOVES.length)ml.append(el('p','mut','Belum ada kuliah yang digeser.'));
+  MOVES.slice().sort((a,b)=>b.from<a.from?-1:1).forEach(m=>{
+   const j=JADWAL.find(x=>x.id===m.id);if(!j)return;
+   const r=el('div','ar'),b=el('span',null,j.n+' · '+HARI[j.d]+' '+tgl(m.from)+' → '+(m.to?HARI[dow(m.to)]+' '+tgl(m.to)+' · '+m.s+'–'+m.e:'dosen tidak masuk')+(m.note?' · '+m.note:'')),x=el('button',null,'Kembalikan');
+   x.onclick=()=>{MOVES=MOVES.filter(y=>y!==m);save()};r.append(b,x);ml.append(r);
+  });
+  const fl=$('#fL');fl.textContent='';
+  if(!FOTO.length)fl.append(el('p','mut','Belum ada foto diupload, galeri masih menampilkan placeholder.'));
+  FOTO.forEach(f=>{
+   const r=el('div','ar'),l=el('span','al'),im=el('img','th'),act=el('span'),eb=el('button',null,'Ubah nama'),db=el('button',null,'Hapus');
+   im.src=f.img;im.alt='';l.append(im,el('span',null,f.cap));
+   eb.onclick=()=>{const n=prompt('Nama dokumentasi',f.cap);if(n&&n.trim())foto.upd(f.id,{cap:n.trim()})};
+   db.onclick=()=>{if(confirm('Hapus foto "'+f.cap+'"?'))foto.del(f.id)};
+   act.append(eb,db);r.append(l,act);fl.append(r);
+  });
+ }
+ function mv(cancel){
+  const j=JADWAL.find(x=>x.id===mi.value);if(!j)return;
+  const from=$('#mF').value,to=cancel?'':$('#mT').value,st=$('#mS').value,en=$('#mE').value;
+  if(!from||dow(from)!==j.d){toast('Tanggal asal harus hari '+HARI[j.d]);return}
+  if(!cancel&&(!to||!st||!en||tm(en)<=tm(st))){toast('Isi tanggal tujuan dan jam dengan benar');return}
+  MOVES=MOVES.filter(m=>!(m.id===j.id&&m.from===from));
+  MOVES.push({id:j.id,from,to,s:cancel?'':st,e:cancel?'':en,note:$('#mN').value.trim()});
+  $('#mN').value='';save();toast(cancel?'Kuliah ditandai tidak masuk':'Kuliah digeser');
+ }
+ const shrink=(file,max)=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',.72))};im.onerror=no;im.src=u});
+ aSync=()=>{if(dlg.open)view()};aDraw=()=>{if(dlg.open&&ADM)draw()};
+ function login(){
+  const p=$('#aPin').value;
+  if(ON){if(CFG.adminEmail.startsWith('GANTI_')){$('#aErr').textContent='Isi CFG.adminEmail dengan email admin di dalam file HTML dulu.';return}auth.signInWithEmailAndPassword($('#aEm').value.trim(),p).then(()=>{$('#aPin').value='';$('#aErr').textContent=''}).catch(err=>{console.error('Login admin:',err);$('#aErr').textContent='Login gagal. Periksa email/password dan aktifkan Email/Password di Firebase Authentication.'})}
+  else if(p===ADMIN_PIN){try{sessionStorage.setItem('si26_adm','1')}catch(e){}$('#aPin').value='';$('#aErr').textContent='';ADM=true;view();renderMsgs()}
+  else $('#aErr').textContent='PIN salah.';
+ }
+ const open=()=>{view();if(!dlg.open)dlg.showModal()};
+ $('#aOpen').onclick=e=>{e.preventDefault();open()};
+ if(location.hash==='#admin')open();
+ addEventListener('hashchange',()=>{if(location.hash==='#admin')open()});
+ $('#aX').onclick=()=>{dlg.close();if(location.hash==='#admin')history.replaceState(null,'',location.pathname)};
+ $('#aGo').onclick=login;$('#aPin').onkeydown=e=>{if(e.key==='Enter')login()};
+ $('#aOut').onclick=()=>{if(ON)auth.signOut();else{try{sessionStorage.removeItem('si26_adm')}catch(e){}ADM=false;view();renderMsgs()}};
+ $('#aCancel').onclick=reset;mi.onchange=defMv;
+ $('#aF').onsubmit=e=>{
+  e.preventDefault();
+  const o={d:+sd.value,s:$('#aS').value,e:$('#aE').value,k:$('#aK').value.trim(),n:$('#aN').value.trim()};
+  if(!o.s||!o.e||!o.n){toast('Isi jam dan nama matkul dulu');return}
+  if(tm(o.e)<=tm(o.s)){toast('Jam selesai harus setelah jam mulai');return}
+  if(ed>=0)JADWAL[ed]={...o,id:JADWAL[ed].id};else JADWAL.push({...o,id:'m'+Date.now()});
+  reset();save();toast('Jadwal tersimpan');
+ };
+ $('#mF2').onsubmit=e=>{e.preventDefault();mv(false)};$('#mCx').onclick=()=>mv(true);
+ $('#fF').onsubmit=async e=>{
+  e.preventDefault();const f=$('#fI').files[0];if(!f){toast('Pilih gambar dulu');return}
+  const b=$('#fSave');b.disabled=true;
+  try{const img=await shrink(f,ON?850:800);if(img.length>750000)throw 0;await foto.add({cap:$('#fC').value.trim()||'Tanpa judul',img});$('#fF').reset();toast('Foto ditambahkan')}
+  catch(x){console.error('Upload foto:',x);toast(ON?'Gagal simpan foto. Cek Firestore Rules dan ukuran gambar.':'Gagal upload, coba gambar yang lebih kecil')}
+  b.disabled=false;
+ };
+ $('#aRst').onclick=()=>{if(!confirm('Kembalikan jadwal ke data bawaan di file? Semua pergeseran ikut terhapus.'))return;JADWAL=norm(JADWAL_DEFAULT.map(x=>({...x})));MOVES=[];reset();save();toast('Jadwal dikembalikan')};
+})();
+
+/* ====== SAMBUNG DATA ====== */
+onAuth=()=>{renderMsgs();aSync()};
+site.sub(applySite);
+pesan.sub(d=>{MSGS=d;renderMsgs()});
+foto.sub(d=>{FOTO=d.slice().sort((a,b)=>a.at-b.at);GALERI=FOTO.length?FOTO.map(f=>({src:f.img,cap:f.cap,id:f.id})):GAL0;galDraw();aDraw()});
+
+/* ====== SCROLL, NAV AKTIF, GLOW HERO ====== */
+(()=>{
+ const secs=['home','struktur','anggota','jadwal','galeri','suara'].map(id=>$('#'+id)),links=document.querySelectorAll('.bnav a,nav .nl a');
+ function onScroll(){
+  const h=document.documentElement,max=h.scrollHeight-innerHeight;
+  $('#prog').style.transform='scaleX('+(max>0?scrollY/max:0)+')';
+  $('#mini').classList.toggle('show',scrollY>innerHeight*.6);
+  let cur='';secs.forEach(x=>{if(x.getBoundingClientRect().top<innerHeight*.4)cur=x.id});
+  links.forEach(a=>{const h=a.getAttribute('href').slice(1);a.classList.toggle('on',h===(a.closest('.bnav')&&cur==='anggota'?'struktur':cur))});
+ }
+ addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onScroll();
+ const hero=$('.hero');
+ hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();hero.style.setProperty('--mx',(e.clientX-r.left)+'px');hero.style.setProperty('--my',(e.clientY-r.top)+'px')},{passive:true});
+})();
+</script>
+</body>
+</html>
